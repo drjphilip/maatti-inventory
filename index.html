@@ -185,30 +185,6 @@
     font-weight: 500;
     color: var(--ink-soft);
   }
-  .stock-num {
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .badge::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .badge.in-stock { background: var(--green-soft); color: var(--green); }
-  .badge.low-stock { background: var(--amber-soft); color: var(--amber); }
-  .badge.out-of-stock { background: var(--red-soft); color: var(--red); }
   .empty {
     text-align: center;
     padding: 48px 20px;
@@ -265,8 +241,7 @@
           <th>Product</th>
           <th>Price</th>
           <th>Weight</th>
-          <th>Stock</th>
-          <th>Status</th>
+          <th>Stock Available</th>
         </tr>
       </thead>
       <tbody id="inventoryBody"></tbody>
@@ -348,20 +323,17 @@
       weightCell.textContent = item.weight || '–';
 
       const stockCell = document.createElement('td');
-      stockCell.className = 'stock-num';
-      stockCell.textContent = item.stock;
-
-      const statusCell = document.createElement('td');
-      const badge = document.createElement('span');
-      badge.className = 'badge ' + status.className;
-      badge.textContent = status.label;
-      statusCell.appendChild(badge);
+      stockCell.className = 'stock-available';
+      if (item.stock === 0) {
+        stockCell.textContent = 'Out of Stock';
+      } else {
+        stockCell.textContent = item.stock;
+      }
 
       row.appendChild(nameCell);
       row.appendChild(priceCell);
       row.appendChild(weightCell);
       row.appendChild(stockCell);
-      row.appendChild(statusCell);
       body.appendChild(row);
     });
 
