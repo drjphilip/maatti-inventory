@@ -149,7 +149,7 @@
     font-size: 14.5px;
   }
   thead th {
-    text-align: left;
+    text-align: center;
     padding: 14px 18px;
     background: var(--surface-soft);
     border-bottom: 1px solid var(--line);
@@ -160,6 +160,7 @@
     font-weight: 600;
   }
   tbody td {
+    text-align: center;
     padding: 13px 18px;
     border-bottom: 1px solid var(--line);
     vertical-align: middle;
@@ -202,7 +203,8 @@
     .toolbar { flex-direction: column; align-items: stretch; }
     .refresh { justify-content: center; }
     .table-wrap { overflow-x: auto; }
-    table { min-width: 700px; }
+    thead th, tbody td { padding: 10px 12px; }
+    table { min-width: 600px; }
   }
   @media (max-width: 420px) {
     .page { padding: 28px 14px 48px; }
