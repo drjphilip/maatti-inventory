@@ -62,60 +62,8 @@
     letter-spacing: -0.01em;
   }
   .toolbar {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 18px;
-    flex-wrap: wrap;
+    display: none;
   }
-  .search {
-    flex: 1;
-    min-width: 220px;
-    position: relative;
-  }
-  .search input {
-    width: 100%;
-    padding: 12px 16px 12px 42px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    font-size: 14px;
-    background: var(--surface);
-    color: var(--ink);
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
-  .search input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-  }
-  .search svg {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
-    stroke: var(--ink-soft);
-  }
-  .refresh {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 18px;
-    border: none;
-    border-radius: 10px;
-    background: var(--accent);
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s ease, transform 0.15s ease;
-  }
-  .refresh:hover { background: #9A642F; }
-  .refresh:active { transform: scale(0.98); }
-  .refresh svg { width: 16px; height: 16px; }
-  .refresh.loading svg { animation: spin 0.8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
   .updated {
     font-size: 12.5px;
     color: var(--ink-soft);
@@ -146,24 +94,29 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14.5px;
+    font-size: 14px;
   }
   thead th {
     text-align: center;
-    padding: 14px 18px;
+    padding: 7px 10px;
     background: var(--surface-soft);
     border-bottom: 1px solid var(--line);
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     color: var(--ink-soft);
     font-weight: 600;
   }
   tbody td {
     text-align: center;
-    padding: 13px 18px;
+    padding: 6px 10px;
     border-bottom: 1px solid var(--line);
     vertical-align: middle;
+  }
+  .stock-available {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 13px;
   }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr.out-of-stock-row {
@@ -175,7 +128,8 @@
   tbody tr:hover { background: #FBF7F0; }
   .product-name {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
+    text-align: left;
   }
   .price {
     font-variant-numeric: tabular-nums;
@@ -200,11 +154,7 @@
     line-height: 1.6;
   }
   @media (max-width: 760px) {
-    .toolbar { flex-direction: column; align-items: stretch; }
-    .refresh { justify-content: center; }
-    .table-wrap { overflow-x: auto; }
-    thead th, tbody td { padding: 10px 12px; }
-    table { min-width: 600px; }
+    thead th, tbody td { padding: 5px 7px; }
   }
   @media (max-width: 420px) {
     .page { padding: 28px 14px 48px; }
@@ -220,17 +170,7 @@
     <h1>What&apos;s on the shelf</h1>
   </header>
 
-  <div class="toolbar">
-    <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line></svg>
-      <input type="text" id="searchInput" placeholder="Search products…" />
-    </div>
-    <button class="refresh" id="refreshBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-      Refresh
-    </button>
-  </div>
-
+  
   <div class="updated">
     <span class="dot" id="statusDot"></span>
     <span id="updatedText">Connecting to inventory…</span>
@@ -243,12 +183,12 @@
           <th>Product</th>
           <th>Price</th>
           <th>Weight</th>
-          <th>Stock Available</th>
+          <th>Available</th>
         </tr>
       </thead>
       <tbody id="inventoryBody"></tbody>
     </table>
-    <div class="empty" id="emptyState" hidden>No products match your search.</div>
+    <div class="empty" id="emptyState" hidden>No products found.</div>
   </div>
 
   <footer>
@@ -270,8 +210,6 @@
 
   const body = document.getElementById('inventoryBody');
   const emptyState = document.getElementById('emptyState');
-  const searchInput = document.getElementById('searchInput');
-  const refreshBtn = document.getElementById('refreshBtn');
   const updatedText = document.getElementById('updatedText');
   const statusDot = document.getElementById('statusDot');
 
@@ -281,7 +219,9 @@
   }
 
   function formatPrice(value) {
-    return '₹' + Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const n = Number(value);
+    const formatted = n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return '₹' + formatted.replace(/\.00$/, '');
   }
 
   function getStatus(stock) {
@@ -291,12 +231,7 @@
   }
 
   function render() {
-    const query = searchInput.value.trim().toLowerCase();
     let visible = inventory.slice();
-
-    if (query) {
-      visible = visible.filter(item => item.name.toLowerCase().includes(query));
-    }
 
     body.innerHTML = '';
     emptyState.hidden = visible.length > 0;
@@ -404,7 +339,6 @@
   }
 
   function loadBoth() {
-    refreshBtn.classList.add('loading');
     updatedText.textContent = 'Updating inventory…';
     productsData = null;
     inventoryData = null;
@@ -415,9 +349,6 @@
     if (oldInventory) oldInventory.remove();
     loadProducts();
   }
-
-  refreshBtn.addEventListener('click', loadBoth);
-  searchInput.addEventListener('input', render);
 
   loadBoth();
   refreshTimer = setInterval(loadBoth, 60000);
@@ -434,8 +365,6 @@
     } else {
       inventoryData = response;
       handleBoth();
-      const btn = document.getElementById('refreshBtn');
-      if (btn) btn.classList.remove('loading');
     }
   };
 </script>
