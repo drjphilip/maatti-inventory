@@ -128,17 +128,18 @@
   tbody tr:hover { background: #FBF7F0; }
   .product-name {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     text-align: left;
+  }
+  .product-name .weight {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin-left: 4px;
   }
   .price {
     font-variant-numeric: tabular-nums;
     font-weight: 500;
-  }
-  .weight {
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-    color: var(--ink-soft);
   }
   .empty {
     text-align: center;
@@ -254,7 +255,7 @@
       if (item.weight) {
         const weightText = document.createElement('span');
         weightText.className = 'weight';
-        weightText.textContent = ' · ' + item.weight;
+        weightText.textContent = '· ' + item.weight;
         nameCell.appendChild(weightText);
       }
 
