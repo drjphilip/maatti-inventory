@@ -182,7 +182,6 @@
         <tr>
           <th>Product</th>
           <th>Price</th>
-          <th>Weight</th>
           <th>Available</th>
         </tr>
       </thead>
@@ -249,15 +248,19 @@
 
       const nameCell = document.createElement('td');
       nameCell.className = 'product-name';
-      nameCell.textContent = item.name;
+      const nameText = document.createElement('span');
+      nameText.textContent = item.name;
+      nameCell.appendChild(nameText);
+      if (item.weight) {
+        const weightText = document.createElement('span');
+        weightText.className = 'weight';
+        weightText.textContent = ' · ' + item.weight;
+        nameCell.appendChild(weightText);
+      }
 
       const priceCell = document.createElement('td');
       priceCell.className = 'price';
       priceCell.textContent = formatPrice(item.price);
-
-      const weightCell = document.createElement('td');
-      weightCell.className = 'weight';
-      weightCell.textContent = item.weight || '–';
 
       const stockCell = document.createElement('td');
       stockCell.className = 'stock-available';
@@ -269,7 +272,6 @@
 
       row.appendChild(nameCell);
       row.appendChild(priceCell);
-      row.appendChild(weightCell);
       row.appendChild(stockCell);
       body.appendChild(row);
     });
