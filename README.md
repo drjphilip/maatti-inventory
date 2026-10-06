@@ -42,3 +42,42 @@ A clean, mobile-friendly page that shows what's on the shelf. Pulls live data fr
 ## License
 
 MIT
+---
+
+## Ordering Flow
+
+The inventory page now has an **Order** button on every in-stock row that opens the order form.
+
+| File | Purpose |
+| --- | --- |
+| `index.html` | Live inventory with an Order button per product |
+| `inventory.js` | Shared loader for the Inventory + Products sheets |
+| `order.html` | Order form: name, phone, address, pin code + live product picker |
+| `order.css` / `order.js` | Order form styling and logic |
+| `poc_login.html` | POC initials login |
+| `poc.html` | POC dashboard: view orders, mark complete |
+| `poc.css` / `poc.js` | POC dashboard styling and logic |
+| `apps-script.js` | Google Apps Script: writes orders to the sheet, serves the POC pages |
+
+### How it works
+
+1. **Customer** taps **Order** on a product in `index.html` → lands on `order.html`
+   with that product pre-selected. They fill in their details and adjust the
+   quantity with `+` / `−` (clamped to the live stock count), then tap **Order Now**.
+2. The order is POSTed to an **Apps Script** web app, which appends a row to the
+   **Orders** tab of the same Google Sheet.
+3. **POC** opens `poc_login.html`, enters their initials, and lands on the
+   **dashboard**. They see every order with customer, phone, pin code, items and
+   status, and can mark any order **Completed** — the status and POC initials are
+   written back to the sheet.
+
+### Setup
+
+1. Open the Apps Script file (`apps-script.js`) in the Google Sheets editor and
+   run it once so the **Orders** tab is created.
+2. **Deploy → New deployment → Web app**:
+   - **Execute as:** me
+   - **Who has access:** Anyone with the link
+3. Copy the deployed web app URL into `order.js` as `ORDER_URL`.
+4. Upload everything to your static host. The POC dashboard is then reachable at
+   `poc.html?initials=XX` (or via `poc_login.html`).
