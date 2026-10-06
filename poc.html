@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POC Dashboard — Maatti</title>
+<link rel="stylesheet" href="poc.css">
+</head>
+<body>
+<div class="page">
+  <header>
+    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <div class="eyebrow">Point of Contact</div>
+    <h1>Order Dashboard</h1>
+    <div class="poc-tag">Logged in as <b id="initialsTag">—</b></div>
+  </header>
+
+  <div class="toolbar">
+    <div class="filter" id="filter">
+      <button data-filter="pending" class="active">Pending</button>
+      <button data-filter="completed">Completed</button>
+    </div>
+    <span class="count" id="count">0 orders</span>
+  </div>
+  <p class="status" id="status" hidden></p>
+
+  <div class="card">
+    <div class="loading" id="loadingState" hidden>
+      <div class="spinner"></div>
+      <span>Loading orders…</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody">
+        <tr><td colspan="5" class="empty">Loading orders…</td></tr>
+      </tbody>
+    </table>
+    <div class="empty" id="emptyState" hidden>No orders match this filter.</div>
+  </div>
+
+  <footer>
+    Orders sync live from the Maatti Google Sheet.
+  </footer>
+</div>
+<script src="poc.js"></script>
+</body>
+</html>

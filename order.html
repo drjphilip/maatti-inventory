@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place an Order — Maatti</title>
+<link rel="stylesheet" href="order.css">
+</head>
+<body>
+<div class="page">
+  <header>
+    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <div class="eyebrow">Bangalore · Place an Order</div>
+    <h1>Order from the shelf</h1>
+  </header>
+
+  <form id="orderForm" novalidate>
+    <div class="field">
+      <label for="name">Full name</label>
+      <input id="name" name="name" type="text" required autocomplete="name" placeholder="e.g. Ravi Kumar">
+    </div>
+    <div class="field">
+      <label for="phone">Phone number</label>
+      <input id="phone" name="phone" type="tel" required autocomplete="tel" placeholder="e.g. 98765 43210">
+    </div>
+    <div class="field">
+      <label for="address">Delivery address</label>
+      <textarea id="address" name="address" rows="2" required autocomplete="street-address" placeholder="Flat, building, street, area"></textarea>
+    </div>
+    <div class="field">
+      <label for="pincode">Pin code</label>
+      <input id="pincode" name="pincode" type="text" required inputmode="numeric" maxlength="6" placeholder="e.g. 560001">
+    </div>
+
+    <div class="items-section">
+      <div class="items-head">
+        <h2>Your order</h2>
+        <span class="hint">Pick products, tap + or &minus; to adjust</span>
+      </div>
+      <div id="inventoryList" class="inventory-list">
+        <div class="empty">Loading live inventory…</div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="summary-row"><span>Items</span><span id="itemCount">0</span></div>
+      <div class="summary-row"><span>Total</span><span id="totalPrice">&in;0</span></div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Order Now</button>
+    <p class="status" id="status" hidden></p>
+  </form>
+</div>
+
+<div class="modal" id="confirmModal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <div class="modal-icon" id="confirmIcon">✓</div>
+      <h2 id="confirmTitle">Order Confirmed</h2>
+      <button class="modal-close" id="confirmClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-line"><span>Order ID</span><b id="confirmId">—</b></p>
+      <p class="modal-line"><span>Name</span><b id="confirmName">—</b></p>
+      <p class="modal-line"><span>Phone</span><b id="confirmPhone">—</b></p>
+      <p class="modal-line"><span>Address</span><b id="confirmAddress">—</b></p>
+      <p class="modal-line"><span>Pin code</span><b id="confirmPin">—</b></p>
+      <div class="modal-items" id="confirmItems"></div>
+      <p class="modal-line"><span>Total</span><b id="confirmTotal">₹0</b></p>
+    </div>
+    <button class="modal-btn" id="confirmDone">Done</button>
+  </div>
+</div>
+<script src="inventory.js"></script>
+<script src="order.js"></script>
+</body>
+</html>

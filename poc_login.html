@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>POC Access — Maatti</title>
+<link rel="stylesheet" href="poc.css">
+</head>
+<body>
+<div class="page login">
+  <header>
+    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <div class="eyebrow">Point of Contact</div>
+    <h1>Order Dashboard</h1>
+  </header>
+
+  <form id="loginForm" autocomplete="off">
+    <div class="field">
+      <input id="poccode" name="poccode" type="text" inputmode="text"
+             autocomplete="off" autocapitalize="characters" spellcheck="false"
+             placeholder="• • •" maxlength="3" aria-label="POC code">
+    </div>
+    <button type="submit" class="submit-btn">Open Dashboard</button>
+    <p class="status" id="status" hidden></p>
+  </form>
+
+  <div class="join-cta">
+    <p class="join-cta-title">Wanna join the POS team?</p>
+    <p class="join-cta-contact">Contact Maatti · <a href="tel:+919329093101">+91 93290 93101</a></p>
+  </div>
+</div>
+<script>
+(function () {
+  const form = document.getElementById('loginForm');
+  const input = document.getElementById('poccode');
+  const status = document.getElementById('status');
+
+  const ALLOWED = ['J', 'JJ', 'BT', 'PT', 'IA', 'JP'];
+
+  input.addEventListener('input', function () {
+    input.value = input.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const v = (input.value || '').trim().toUpperCase();
+    if (ALLOWED.indexOf(v) === -1) {
+      status.hidden = false;
+      status.className = 'status error';
+      status.textContent = 'That code is not recognised. Please try again.';
+      return;
+    }
+    status.hidden = true;
+    window.location.href = 'poc.html?initials=' + encodeURIComponent(v);
+  });
+})();
+</script>
+</body>
+</html>

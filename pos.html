@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POC Order Dashboard — Maatti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAF6F0;
+  --surface: #FFFFFF;
+  --surface-soft: #F3EDE3;
+  --ink: #3E2E22;
+  --ink-soft: #7A6A5B;
+  --line: #E4DACA;
+  --accent: #B0763B;
+  --accent-soft: #F0E3D2;
+  --accent-hover: #96612d;
+  --green: #2E7D32;
+  --green-soft: #E8F5E9;
+  --amber: #B8860B;
+  --amber-soft: #FAF0DC;
+  --red: #C62828;
+  --red-soft: #FFEBEE;
+  --radius: 14px;
+  --shadow: 0 4px 16px rgba(62, 46, 34, 0.08);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  padding: 0;
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 18px 60px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.logo {
+  width: 180px;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px;
+}
+.eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+.poc-tag {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.poc-tag b {
+  color: var(--accent);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.filter {
+  display: inline-flex;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.filter button {
+  border: 0;
+  background: transparent;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.filter button.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.count {
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.refresh-btn {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-weight: 500;
+}
+.refresh-btn:hover {
+  background: var(--surface-soft);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: left;
+}
+thead th {
+  padding: 12px 14px;
+  background: var(--surface-soft);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+tbody tr:last-child td {
+  border-bottom: none;
+}
+tbody tr:hover {
+  background: #FCF9F4;
+}
+
+.order-id {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.order-date {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+
+.cust-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.cust-contact {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.cust-contact a {
+  color: inherit;
+  text-decoration: none;
+}
+.cust-contact a:hover {
+  text-decoration: underline;
+  color: var(--accent);
+}
+.cust-address {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  max-width: 220px;
+  line-height: 1.35;
+}
+
+/* Item tags and product list display */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+.item-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 12px;
+  color: var(--ink);
+  width: fit-content;
+}
+.item-chip .qty-badge {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.badge.pending {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+.badge.completed {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.btn.complete {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.btn.complete:hover {
+  background: #256628;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.done-label {
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 14px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2.5px solid var(--line);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.status-msg {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+.status-msg.error {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid #FFCDD2;
+}
+.status-msg.success {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid #C8E6C9;
+}
+
+footer {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <div class="eyebrow">Point of Contact / POS</div>
+    <h1>Order Management Dashboard</h1>
+    <div class="poc-tag">Operator: <b id="initialsTag">Staff</b></div>
+  </header>
+
+  <div id="statusBox" class="status-msg" hidden></div>
+
+  <div class="toolbar">
+    <div class="filter" id="filter">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="pending">Pending</button>
+      <button data-filter="completed">Completed</button>
+    </div>
+    <div class="toolbar-actions">
+      <span class="count" id="count">Loading orders…</span>
+      <button class="refresh-btn" id="refreshBtn">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="loading" id="loadingState">
+      <div class="spinner"></div>
+      <span>Syncing orders live from Google Sheet…</span>
+    </div>
+    <div class="table-responsive">
+      <table id="ordersTable" hidden>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Ordered Products</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="emptyState" hidden>No orders found.</div>
+  </div>
+
+  <footer>
+    Orders sync directly from the live Maatti Google Sheet &middot; <a href="order.html">Place New Order</a>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const SHEET_ID = '1jAnvqv6uq0UTiRmFw2shcEcWNLOGEeN6kFFMSj13J1k';
+  const GVIZ_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Orders';
+  const ORDER_URL = 'https://script.google.com/macros/s/AKfycbxrSf4NuIo9cyNgY0phe0b1hQQGhaLrTJCb7Zvcro4dlTr3PwrZmo44ipQcKvnF9KOFew/exec';
+
+  const BODY = document.getElementById('ordersBody');
+  const TABLE = document.getElementById('ordersTable');
+  const EMPTY = document.getElementById('emptyState');
+  const COUNT = document.getElementById('count');
+  const TAG = document.getElementById('initialsTag');
+  const FILTER = document.getElementById('filter');
+  const LOADING = document.getElementById('loadingState');
+  const STATUS = document.getElementById('statusBox');
+  const REFRESH = document.getElementById('refreshBtn');
+
+  let orders = [];
+  let currentFilter = 'all';
+  let initials = '';
+
+  function setStatus(msg, type) {
+    if (!msg) {
+      STATUS.hidden = true;
+      return;
+    }
+    STATUS.textContent = msg;
+    STATUS.className = 'status-msg ' + (type || 'success');
+    STATUS.hidden = false;
+    setTimeout(() => { STATUS.hidden = true; }, 4000);
+  }
+
+  function badge(status) {
+    const s = (status || 'Pending').toLowerCase();
+    return '<span class="badge ' + s + '">' + (status || 'Pending') + '</span>';
+  }
+
+  function renderItemsList(rawItems) {
+    if (!rawItems || !rawItems.trim()) {
+      return '<span style="color:var(--ink-soft);font-style:italic;">No products specified</span>';
+    }
+
+    // Handles comma-separated items like "Imli 2 x1, Brown Channa x2"
+    const items = rawItems.split(',').map(s => s.trim()).filter(Boolean);
+    let html = '<div class="items-list">';
+    items.forEach(it => {
+      const match = it.match(/^(.*?)\s*[xX×](\d+)$/);
+      if (match) {
+        html += '<div class="item-chip">' +
+                '<span>' + escapeHtml(match[1].trim()) + '</span>' +
+                '<span class="qty-badge">&times;' + match[2] + '</span>' +
+                '</div>';
+      } else {
+        html += '<div class="item-chip"><span>' + escapeHtml(it) + '</span></div>';
+      }
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    const filtered = orders.filter(function (o) {
+      if (currentFilter === 'all') return true;
+      return (o.status || '').toLowerCase() === currentFilter;
+    });
+
+    COUNT.textContent = filtered.length + ' order' + (filtered.length === 1 ? '' : 's');
+
+    if (!filtered.length) {
+      BODY.innerHTML = '';
+      TABLE.hidden = true;
+      EMPTY.hidden = false;
+      EMPTY.textContent = orders.length
+        ? 'No orders match this filter.'
+        : 'No orders have been recorded in the sheet yet.';
+      return;
+    }
+
+    EMPTY.hidden = true;
+    TABLE.hidden = false;
+    BODY.innerHTML = '';
+
+    filtered.forEach(function (o) {
+      const tr = document.createElement('tr');
+      tr.dataset.orderId = o.orderId;
+
+      // Order ID + Timestamp
+      const idTd = document.createElement('td');
+      idTd.innerHTML = '<div class="order-id">' + escapeHtml(o.orderId) + '</div>' +
+                       (o.timestamp ? '<div class="order-date">' + escapeHtml(o.timestamp) + '</div>' : '');
+
+      // Customer details
+      const custTd = document.createElement('td');
+      let custHtml = '<div class="cust-name">' + escapeHtml(o.name || 'Anonymous') + '</div>';
+      if (o.phone) {
+        custHtml += '<div class="cust-contact"><a href="tel:' + escapeHtml(o.phone) + '">📞 ' + escapeHtml(o.phone) + '</a></div>';
+      }
+      if (o.address || o.pincode) {
+        custHtml += '<div class="cust-address">' +
+                    escapeHtml(o.address || '') +
+                    (o.pincode ? ' · ' + escapeHtml(o.pincode) : '') +
+                    '</div>';
+      }
+      custTd.innerHTML = custHtml;
+
+      // Products / Items list
+      const itemsTd = document.createElement('td');
+      itemsTd.innerHTML = renderItemsList(o.items);
+
+      // Status
+      const statusTd = document.createElement('td');
+      statusTd.innerHTML = badge(o.status);
+
+      // Actions
+      const actionTd = document.createElement('td');
+      if ((o.status || '').toLowerCase() === 'completed') {
+        actionTd.innerHTML = '<span class="done-label">✓ Done' + (o.pocInitials ? ' (' + escapeHtml(o.pocInitials) + ')' : '') + '</span>';
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'btn complete';
+        btn.textContent = 'Mark Complete';
+        btn.addEventListener('click', function () {
+          markComplete(o.orderId, btn);
+        });
+        actionTd.appendChild(btn);
+      }
+
+      tr.appendChild(idTd);
+      tr.appendChild(custTd);
+      tr.appendChild(itemsTd);
+      tr.appendChild(statusTd);
+      tr.appendChild(actionTd);
+      BODY.appendChild(tr);
+    });
+  }
+
+  function markComplete(orderId, btn) {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Updating…';
+    }
+
+    const payload = new URLSearchParams();
+    payload.append('action', 'complete');
+    payload.append('orderId', orderId);
+    payload.append('initials', initials || 'POS');
+
+    // First try Google Script run if embedded in Apps Script
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler(function () {
+          setStatus('Order ' + orderId + ' marked completed!', 'success');
+          loadOrders();
+        })
+        .withFailureHandler(function (err) {
+          if (btn) { btn.disabled = false; btn.textContent = 'Mark Complete'; }
+          setStatus('Update failed: ' + (err && err.message ? err.message : 'Please try again'), 'error');
+        })
+        .markCompletedPublic(orderId, initials || 'POS');
+      return;
+    }
+
+    // Direct HTTP POST to deployed Apps Script Web App
+    fetch(ORDER_URL, {
+      method: 'POST',
+      body: payload
+    })
+    .then(r => r.text())
+    .then(text => {
+      setStatus('Order ' + orderId + ' marked completed!', 'success');
+      // Update local state immediately for instant feedback
+      const target = orders.find(x => x.orderId === orderId);
+      if (target) {
+        target.status = 'Completed';
+        target.pocInitials = initials || 'POS';
+        render();
+      }
+      setTimeout(loadOrders, 1000);
+    })
+    .catch(() => {
+      // Fallback: try GET query
+      fetch(ORDER_URL + '?action=complete&orderId=' + encodeURIComponent(orderId) + '&initials=' + encodeURIComponent(initials || 'POS'), { mode: 'no-cors' })
+        .then(() => {
+          setStatus('Order updated!', 'success');
+          const target = orders.find(x => x.orderId === orderId);
+          if (target) {
+            target.status = 'Completed';
+            target.pocInitials = initials || 'POS';
+            render();
+          }
+          setTimeout(loadOrders, 1500);
+        })
+        .catch(err => {
+          if (btn) { btn.disabled = false; btn.textContent = 'Mark Complete'; }
+          setStatus('Could not update order. Check internet connection.', 'error');
+        });
+    });
+  }
+
+  function loadOrders() {
+    LOADING.hidden = false;
+    EMPTY.hidden = true;
+
+    // Use JSONP callback so it works seamlessly from file://, localhost, or any static host
+    const callbackName = 'gvizCallback_' + Date.now();
+    window[callbackName] = function (response) {
+      delete window[callbackName];
+      if (script && script.parentNode) script.remove();
+      LOADING.hidden = true;
+
+      try {
+        const rows = response.table && response.table.rows ? response.table.rows : [];
+        orders = [];
+        rows.forEach(r => {
+          const c = r.c || [];
+          const id = c[1] ? String(c[1].v || '') : '';
+          // Skip empty or repeated header rows
+          if (!id || id === 'Order ID') return;
+
+          orders.push({
+            timestamp: c[0] ? (c[0].f || c[0].v || '') : '',
+            orderId: id,
+            name: c[2] ? String(c[2].v || '') : '',
+            phone: c[3] ? (c[3].f || String(c[3].v || '')) : '',
+            address: c[4] ? String(c[4].v || '') : '',
+            pincode: c[5] ? (c[5].f || String(c[5].v || '')) : '',
+            items: c[6] ? String(c[6].v || '') : '',
+            status: c[7] ? String(c[7].v || 'Pending') : 'Pending',
+            pocInitials: c[8] ? String(c[8].v || '') : ''
+          });
+        });
+
+        // Show newest orders first
+        orders.reverse();
+        render();
+      } catch (err) {
+        TABLE.hidden = true;
+        EMPTY.hidden = false;
+        EMPTY.textContent = 'Error parsing orders: ' + err.message;
+      }
+    };
+
+    const script = document.createElement('script');
+    script.src = GVIZ_URL + '&tqx=responseHandler:' + callbackName + '&t=' + Date.now();
+    script.onerror = function () {
+      LOADING.hidden = true;
+      TABLE.hidden = true;
+      EMPTY.hidden = false;
+      EMPTY.textContent = 'Unable to reach Google Sheets. Please check your connection.';
+    };
+    document.body.appendChild(script);
+  }
+
+  FILTER.addEventListener('click', function (e) {
+    const btn = e.target.closest('button[data-filter]');
+    if (!btn) return;
+    currentFilter = btn.dataset.filter;
+    Array.prototype.forEach.call(FILTER.children, function (c) {
+      c.classList.toggle('active', c === btn);
+    });
+    render();
+  });
+
+  REFRESH.addEventListener('click', function () {
+    loadOrders();
+    setStatus('Refreshed orders from Google Sheet', 'success');
+  });
+
+  function init() {
+    const params = new URLSearchParams(location.search);
+    initials = (params.get('initials') || '').slice(0, 3).toUpperCase();
+    if (initials) TAG.textContent = initials;
+    loadOrders();
+    // Auto-refresh every 30 seconds
+    setInterval(loadOrders, 30000);
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>
