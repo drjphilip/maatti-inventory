@@ -9,7 +9,7 @@
 <body>
 <div class="page">
   <header>
-    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <a class="logo" href="index.html"><img src="docs/maatti-logo.png" alt="Maatti" /></a>
     <div class="eyebrow">Point of Contact</div>
     <h1>Order Dashboard</h1>
     <div class="poc-tag">Logged in as <b id="initialsTag">—</b></div>
@@ -35,12 +35,11 @@
           <th>Order ID</th>
           <th>Customer</th>
           <th>Items</th>
-          <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody id="ordersBody">
-        <tr><td colspan="5" class="empty">Loading orders…</td></tr>
+        <tr><td colspan="4" class="empty">Loading orders…</td></tr>
       </tbody>
     </table>
     <div class="empty" id="emptyState" hidden>No orders match this filter.</div>

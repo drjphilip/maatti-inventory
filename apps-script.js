@@ -107,7 +107,12 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    const items = parseItems_(params['items[]'] || params.items);
+    // e.parameter drops all but one value when the same field name is
+    // repeated (the order form sends one items[] per product). Use
+    // e.parameters instead — it returns the full array.
+    const rawItems = (e.parameters && e.parameters['items[]'])
+      || params['items[]'] || params.items;
+    const items = parseItems_(rawItems);
     const phone = (params.phone || '').trim();
 
     if (phone && countOrdersByPhone_(phone) >= MAX_ORDERS_PER_PHONE) {

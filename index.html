@@ -41,10 +41,18 @@
     margin-bottom: 34px;
   }
   .logo {
-    width: 250px;
+    width: 200px;
     height: auto;
     display: block;
-    margin: 0 auto 18px;
+    margin: 0 auto 14px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .logo img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
   .eyebrow {
     font-size: 12px;
@@ -70,6 +78,7 @@
     margin-bottom: 14px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
   }
   .dot {
@@ -116,9 +125,9 @@
   .order-cell { text-align: center; }
   .order-btn {
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
-    padding: 6px 16px;
+    padding: 9px 22px;
     border: 1px solid var(--accent);
     background: transparent;
     color: var(--accent);
@@ -129,6 +138,12 @@
   .order-btn:hover:not(.disabled) { background: var(--accent); color: #fff; }
   .order-btn:active:not(.disabled) { transform: scale(0.96); }
   .order-btn.disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .order-toolbar {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .order-toolbar .order-btn { font-size: 15px; padding: 9px 22px; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr.out-of-stock-row {
     opacity: 0.45;
@@ -151,6 +166,11 @@
   .price {
     font-variant-numeric: tabular-nums;
     font-weight: 500;
+  }
+  .stock {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ink-soft);
   }
   .empty {
     text-align: center;
@@ -178,14 +198,14 @@
   }
   @media (max-width: 420px) {
     .page { padding: 28px 14px 48px; }
-    .logo { width: 180px; }
+    .logo { width: 160px; }
   }
 </style>
 </head>
 <body>
 <div class="page">
   <header>
-    <img class="logo" src="docs/maatti-logo.png" alt="Maatti" />
+    <a class="logo" href="index.html"><img src="docs/maatti-logo.png" alt="Maatti" /></a>
     <div class="eyebrow">Bangalore · Live Inventory</div>
     <h1>What&apos;s on the shelf</h1>
   </header>
@@ -196,13 +216,17 @@
     <span id="updatedText">Connecting to inventory…</span>
   </div>
 
+  <div class="order-toolbar">
+    <button class="order-btn" id="orderTopBtn" disabled>Order</button>
+  </div>
+
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>Product</th>
           <th>Price</th>
-          <th>Order</th>
+          <th>Available</th>
         </tr>
       </thead>
       <tbody id="inventoryBody"></tbody>
@@ -264,21 +288,13 @@
       priceCell.className = 'price';
       priceCell.textContent = maattiInventory.formatPrice(item.price);
 
-      const orderCell = document.createElement('td');
-      orderCell.className = 'order-cell';
-      const orderBtn = document.createElement('button');
-      orderBtn.className = 'order-btn' + (item.stock === 0 ? ' disabled' : '');
-      orderBtn.textContent = item.stock === 0 ? 'Sold Out' : 'Order';
-      orderBtn.addEventListener('click', function () {
-        if (item.stock > 0) {
-          window.location.href = 'order.html?product=' + encodeURIComponent(item.name);
-        }
-      });
-      orderCell.appendChild(orderBtn);
+      const stockCell = document.createElement('td');
+      stockCell.className = 'stock';
+      stockCell.textContent = item.stock === 0 ? '0' : String(item.stock);
 
       row.appendChild(nameCell);
       row.appendChild(priceCell);
-      row.appendChild(orderCell);
+      row.appendChild(stockCell);
       body.appendChild(row);
     });
   }
@@ -294,6 +310,13 @@
     updatedText.textContent = 'Unable to read inventory data. Please refresh.';
     statusDot.style.background = 'var(--red)';
   };
+
+  const orderTopBtn = document.getElementById('orderTopBtn');
+  if (orderTopBtn) {
+    orderTopBtn.addEventListener('click', function () {
+      window.location.href = 'order.html';
+    });
+  }
 
   maattiInventory.start();
 </script>

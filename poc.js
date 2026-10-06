@@ -105,9 +105,6 @@
       const itemsTd = document.createElement('td');
       itemsTd.innerHTML = renderItems(o.items);
 
-      const statusTd = document.createElement('td');
-      statusTd.innerHTML = badge(o.status);
-
       const actionTd = document.createElement('td');
       if ((o.status || '').toLowerCase() === 'completed') {
         const done = document.createElement('span');
@@ -125,7 +122,6 @@
       tr.appendChild(idTd);
       tr.appendChild(custTd);
       tr.appendChild(itemsTd);
-      tr.appendChild(statusTd);
       tr.appendChild(actionTd);
       BODY.appendChild(tr);
     });

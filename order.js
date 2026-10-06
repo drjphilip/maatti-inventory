@@ -231,8 +231,9 @@
 
     modal.hidden = false;
     function closeModal() { modal.hidden = true; }
+    function goHome() { window.location.href = 'index.html'; }
     close.onclick = closeModal;
-    done.onclick = closeModal;
+    done.onclick = goHome;
     modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
   }
 
