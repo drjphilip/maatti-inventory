@@ -26,7 +26,8 @@
     </div>
     <div class="field">
       <label for="phone">Phone number</label>
-      <input id="phone" name="phone" type="tel" required autocomplete="tel" placeholder="e.g. 98765 43210">
+      <input id="phone" name="phone" type="tel" required autocomplete="tel" placeholder="e.g. 98765 43210"
+             oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
     </div>
     <div class="field">
       <label for="address">Delivery address</label>
