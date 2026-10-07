@@ -136,6 +136,10 @@
       setStatus('Please fill in all the details.', 'error');
       return;
     }
+    if (!/^[A-Za-z ]+$/.test(order.name)) {
+      setStatus('Name should only contain letters and spaces.', 'error');
+      return;
+    }
     if (!order.items.length) {
       setStatus('Please pick at least one product.', 'error');
       return;
@@ -144,8 +148,8 @@
       setStatus('Please enter a valid 10-digit phone number.', 'error');
       return;
     }
-    if (!/^\d{6}$/.test(order.pincode)) {
-      setStatus('Please enter a valid 6-digit pin code.', 'error');
+    if (!/^56[0-2]\d{3}$/.test(order.pincode)) {
+      setStatus('Please enter a Bangalore pin code (560xxx–562xxx).', 'error');
       return;
     }
 

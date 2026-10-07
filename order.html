@@ -8,6 +8,7 @@
 <style>
 .logo { width: 200px; height: auto; display: block; margin: 0 auto 14px; cursor: pointer; text-decoration: none; color: inherit; }
 .logo img { display: block; width: 100%; height: auto; }
+  .field-error { display: block; font-size: 12px; color: var(--red); margin-top: 5px; }
 </style>
 </head>
 <body>
@@ -21,7 +22,9 @@
   <form id="orderForm" novalidate>
     <div class="field">
       <label for="name">Full name</label>
-      <input id="name" name="name" type="text" required autocomplete="name" placeholder="e.g. Joshua Philip">
+      <input id="name" name="name" type="text" required autocomplete="name" placeholder="e.g. Joshua Philip"
+             oninput="this.value=this.value.replace(/[^A-Za-z ]/g,'')">
+      <span class="field-error" id="nameError" hidden>Letters and spaces only</span>
     </div>
     <div class="field">
       <label for="phone">Phone number</label>
@@ -33,7 +36,9 @@
     </div>
     <div class="field">
       <label for="pincode">Pin code</label>
-      <input id="pincode" name="pincode" type="text" required inputmode="numeric" maxlength="6" placeholder="e.g. 560001">
+      <input id="pincode" name="pincode" type="text" required inputmode="numeric" maxlength="6" placeholder="e.g. 560001"
+             oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,6)">
+      <span class="field-error" id="pincodeError" hidden>Must be a Bangalore pin code (560xxx–562xxx)</span>
     </div>
 
     <div class="items-section">
